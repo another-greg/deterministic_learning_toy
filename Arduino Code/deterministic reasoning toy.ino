@@ -107,6 +107,11 @@ void loop(){
 }
 
 void run_prob_mode(){
+  // For probabilistic condition:
+// - 1st block makes machine light up 3/3 times
+// - 2nd block makes machine light up 0/3 times
+// - 3rd block makes machine light up 2⁄3 times (on 2nd and 3rd tries)
+// - 4th block makes machine light up 1⁄3 times (on 3rd try)
   current_block = get_block_id();
   if(current_block == EMPTY_BLOCK){
     set_light(false);
@@ -119,12 +124,22 @@ void run_prob_mode(){
   Serial.print("Placement count = "); Serial.println(placement_count);
   if(previous_block == EMPTY_BLOCK && current_block != EMPTY_BLOCK){
     switch(placement_count){
-      case 0:
-      case 1:
-      case 2:
-      case 5:
-      case 10:
-      case 11:
+      case 0: // 1st block placement
+        set_light(true);
+        break;        
+      case 1: // 2nd block placement
+        set_light(true);
+        break;
+      case 2: // 3rd block placement
+        set_light(true);
+        break;
+      case 7: // 8th block placement (3rd block, second time)
+        set_light(true);
+        break;
+      case 8: // 9th block placement (3rd block, thrid time)
+        set_light(true);
+        break;
+      case 11: // last block placement (4th block, third time)
         set_light(true);
         break;
       default:
@@ -140,6 +155,11 @@ void run_prob_mode(){
 }
 
 void run_det_mode(){
+//   For deterministic condition:
+// - 1st block makes machine light up 3/3 times
+// - 2nd block makes machine light up 0/3 times
+// - 3rd block makes machine light up 3/3 times
+// - 4th block makes machine light up 3/3 times
   current_block = get_block_id();
   if(current_block == EMPTY_BLOCK){
     set_light(false);
@@ -152,19 +172,17 @@ void run_det_mode(){
   Serial.print("Placement count = "); Serial.println(placement_count);
   if(previous_block == EMPTY_BLOCK && current_block != EMPTY_BLOCK){
     switch(placement_count){
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-      case 9:
-      case 10:
-      case 11:
-        set_light(true);
-        break;
-      default:
+      case 3: // 4th block placement (2nd block 1st time)
         set_light(false);
+        break;
+      case 4: // 5th block placement (2nd block, 2nd time)
+        set_light(false);
+        break;
+      case 5: // 6th block placement (2nd block, 3rd time)
+        set_light(false);
+        break;  
+      default:
+        set_light(true);
         break;
     }
     placement_count++;
@@ -177,6 +195,14 @@ void run_det_mode(){
 
   
 void run_test_mode(){
+//   Now kids get to play with the machine by themselves. Machine would be le
+// “on.”
+
+// - 6 blocks total
+// - 3 make the machine go every time they’re placed on top (we gave all of these
+// blocks magnets in each hole at the bottom of the block and the code said that if
+// there is 1 or more magnet(s) on the machine, the light would turn on))
+// - 3 never make the machine go (none of these blocks had magnets on them)
   current_block = get_block_id();
   if(current_block == EMPTY_BLOCK){
     set_light(false);
