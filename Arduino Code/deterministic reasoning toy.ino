@@ -15,7 +15,10 @@ const int MODE_ADMIN_PIN = 5;
 // Constants
 const float voltageRef = 5.0;     // Reference voltage of Arduino (5V)
 const int adcResolution = 1023;  // ADC resolution for Arduino (10-bit)
-const float sensitivity = 2.5;   // A1320 sensitivity in mV/G (adjust based on your datasheet)
+const float magnet_present_threshold_low = 0.5; // experimentally determined voltage threshold 
+                                            // when north pole is infront of sensor
+const float magnet_present_threshold_high = 1.75; // experimentally determined voltage threshold
+                                                  // when south pole is in front of sensor
 
 const int MODE_UNKNOWN = -1;
 const int MODE_ADMIN = 0;
@@ -253,12 +256,13 @@ int get_block_id(){
 float get_sensor_value(int hallSensor){
   int sensorValue = analogRead(hallSensor);
   float voltage = sensorValue * (voltageRef / adcResolution);
-  float magneticFieldStrength = (voltage - 2.5) / (sensitivity / 1000.0);
-  return magneticFieldStrength;
+  return voltage;
 }
 
 bool is_sensor_active(int hallSensor){
-  return get_sensor_value(hallSensor) > 500;
+  float sensor_voltage = get_sensor_value(hallSensor);
+  return ((sensor_voltage  < magnet_present_threshold_low) 
+          || (sensor_voltage > magnet_present_threshold_high) );
 }
 
 void set_light(bool on){
